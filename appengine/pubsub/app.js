@@ -26,7 +26,7 @@ io.on('connection', function (socket) {
 
   const subscriptionName = 'PULL_SUBS';
   const topicName = 'TRANSACTION_TOPIC';
-  const timeout = 50;
+  const timeout = 60;
   // Instantiates a client
   const pubSubClient = new PubSub();
 

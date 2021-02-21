@@ -94,8 +94,10 @@
     socket.on('news', function (msg) {
       console.log(msg);
       if (msg != 'undefined' && msg != 'timeout') {
+        var obj = JSON.parse(msg);
+        var  display = obj.from + " transferred  " + obj.amount + " to " + obj.to;
         var item = document.createElement('li');
-        item.textContent = msg;
+        item.textContent = display;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       }
