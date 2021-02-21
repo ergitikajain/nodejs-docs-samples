@@ -61,7 +61,7 @@ io.on('connection', function (socket) {
     // if your limit was hit or if you don't want to ack the message.
     // message.nack();
 
- console.log(`Counts : ${messageCount}`);
+    console.log(`Counts : ${messageCount}`);
     //strData = {"label": formatted,
     //             "value": Count
     //         }
@@ -75,7 +75,7 @@ io.on('connection', function (socket) {
 
   setTimeout(() => {
     console.log(`Enter timeout`);
-    //subscription.removeListener('message', messageHandler);
+    subscription.removeListener('message', messageHandler);
     console.log(`0 message(s) received.`);
     var x = new Date();
 
@@ -87,7 +87,7 @@ io.on('connection', function (socket) {
     console.log(``);
     socket.emit('news', 'timeout');
 
-  }, timeout);
+  }, timeout * 1000);
 
   //other handling
   if (typeof strData == 'undefined') {
