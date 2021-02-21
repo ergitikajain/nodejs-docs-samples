@@ -5,17 +5,17 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 // Imports the Google Cloud client library
-const {PubSub} = require(`@google-cloud/pubsub`);
+const { PubSub } = require(`@google-cloud/pubsub`);
 
 // Your Google Cloud Platform project ID
 const projectId = 'Majestic-lodge-304920';
 
 //Provide the absolute path to the dist directory.
-app.use(express.static(__dirname + '/dist'));
+app.use(express.static(__dirname + '/views'));
 
 //On get request send 'index.html' page as a response.
-app.get('/', function(req, res) {
-   res.sendFile(__dirname +'/index.html');
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html');
 });
 
 //Whenever someone connects this gets executed
@@ -30,81 +30,78 @@ io.on('connection', function (socket) {
   // Instantiates a client
   const pubSubClient = new PubSub();
 
-  var strData;
-    /**
-     * TODO(developer): Uncomment the following lines to run the sample.
-     * https://cloud.google.com/pubsub/docs/pull#pubsub-pull-messages-async-nodejs
-     */
+  var strData = "test";
+  /**
+   * TODO(developer): Uncomment the following lines to run the sample.
+   * https://cloud.google.com/pubsub/docs/pull#pubsub-pull-messages-async-nodejs
+   */
 
 
-    console.log(`Getting subsription`);
+  console.log(`Getting subsription`);
 
-    // References an existing subscription
-    const subscription = pubSubClient.subscription(subscriptionName);
-    console.log(`Got subsription`);
-
-
-
-    // Create an event handler to handle messages
-    let messageCount = 0;
-    const messageHandler = message => {
+  // References an existing subscription
+  const subscription = pubSubClient.subscription(subscriptionName);
+  console.log(`Got subsription`);
+  // Create an event handler to handle messages
+  let messageCount = 0;
+  const messageHandler = message => {
     console.log(`\tData: ${message.data}`);
     console.log(`\tAttributes: ${message.attributes}`);
-  //  var obj = JSON.parse(message.data);
-	//  console.log(`\tTimeStamp: ${obj.messages.timestamp}`);
-	//  console.log(`\tAmount: ${obj.messages.amount}`);
-	  
-      
-      messageCount += 1;
-      console.log(`Message count : ${messageCount}`);
-      
-      message.ack();
-      console.log(`Message Acknowledged`);
+    // var stringyfyJson = JSON.stringify(message.data);
+    //var obj = JSON.parse(stringyfyJson);
+    // console.log(`\tTimeStamp: ${obj.label}`);
+    // console.log(`\tAmount: ${obj.amount}`);
+    messageCount += 1;
+    console.log(`Message count : ${messageCount}`);
 
-      // This doesn't ack the message, but allows more messages to be retrieved
-      // if your limit was hit or if you don't want to ack the message.
-      // message.nack();
-    
+    message.ack();
+    console.log(`Message Acknowledged`);
 
-      console.log(`Counts : ${messageCount}`);
-      //strData = {"label": formatted,
-        //             "value": Count
-         //         }
+    // This doesn't ack the message, but allows more messages to be retrieved
+    // if your limit was hit or if you don't want to ack the message.
+    // message.nack();
 
-      socket.emit('news', `${message.data}`);
-      console.log(`emit:  ${message.data}`);
-      };
+ console.log(`Counts : ${messageCount}`);
+    //strData = {"label": formatted,
+    //             "value": Count
+    //         }
 
-    // Listen for new messages until timeout is hit
-      subscription.on(`message`, messageHandler);
-      
-      setTimeout(() => {
-      	console.log(`Enter timeout`);
-      	//subscription.removeListener('message', messageHandler);
-        console.log(`0 message(s) received.`);
-        var x = new Date();
+    socket.emit('news', `${message.data}`);
+    console.log(`emit:  ${message.data}`);
+  };
 
-      	strData = {"label": "message.data"
-              
-                  }
-        console.log(`strData : ${strData}`)
-        console.log(``);
-        socket.emit('news', 'timeout');
-        
-      }, timeout);
+  // Listen for new messages until timeout is hit
+  subscription.on(`message`, messageHandler);
 
-    //other handling
-    if ( typeof strData == 'undefined') {
-    	console.log(`Something else happened`)
+  setTimeout(() => {
+    console.log(`Enter timeout`);
+    //subscription.removeListener('message', messageHandler);
+    console.log(`0 message(s) received.`);
+    var x = new Date();
 
-        socket.emit('news', 'undefined');
-              }
+    strData = {
+      "label": "message.data"
 
-    console.log(`strData : undefined`);
+    }
+    console.log(`strData : ${strData}`)
     console.log(``);
-    
-    
-    
+    socket.emit('news', 'timeout');
+
+  }, timeout);
+
+  //other handling
+  if (typeof strData == 'undefined') {
+    console.log(`Something else happened`)
+
+    socket.emit('news', 'undefined');
+    console.log(`strData : undefined`);
+
+  }
+
+  console.log(``);
+
+
+
 });
 
 //on Disconnect
@@ -114,6 +111,6 @@ io.on('disconnect', function () {
 });
 
 //server listening on port 8080
-http.listen(8080, function() {
-   console.log('listening on *:8080');
+http.listen(8080, function () {
+  console.log('listening on *:8080');
 });
